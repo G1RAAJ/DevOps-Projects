@@ -22,7 +22,7 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                dir('Nginx_EKS/Terraform') {
+                dir('Nginx_eks/Terraform') {
                     sh 'terraform init'
                 }
             }
@@ -30,7 +30,7 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                dir('Nginx_EKS/Terraform') {
+                dir('Nginx_eks/Terraform') {
                     sh 'terraform validate'
                 }
             }
@@ -38,7 +38,7 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                dir('Nginx_EKS/Terraform') {
+                dir('Nginx_eks/Terraform') {
                     sh 'terraform plan'
                 }
             }
@@ -46,7 +46,7 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                dir('Nginx_EKS/Terraform') {
+                dir('Nginx_eks/Terraform') {
                     sh 'terraform apply -auto-approve'
                 }
             }
@@ -76,7 +76,7 @@ pipeline {
         stage('Deploy NGINX via Helm') {
             steps {
                 sh '''
-                helm upgrade --install nginx ./Nginx_EKS/Helm \
+                helm upgrade --install nginx ./Nginx_eks/Helm \
                 --namespace default
                 '''
             }
