@@ -1,5 +1,3 @@
 apiVersion: v2
 name: nginx
-description: NGINX Helm Chart for EKS
 version: 0.1.0
-appVersion: "1.0"
