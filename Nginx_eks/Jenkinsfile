@@ -64,8 +64,37 @@ pipeline {
                 }
             }
         }
+
+        // 🔥 NEW STAGE
+        stage('Auto Cleanup') {
+            steps {
+                echo "Waiting 5 minutes before cleanup..."
+                sleep(time: 5, unit: 'MINUTES')
+
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-creds'
+                ]]) {
+                    sh '''
+                    aws eks update-kubeconfig \
+                    --region $AWS_REGION \
+                    --name $CLUSTER_NAME || true
+
+                    echo "===== DELETE K8S RESOURCES ====="
+                    kubectl delete all --all || true
+                    '''
+
+                    dir('Nginx_eks/Terraform') {
+                        sh '''
+                        terraform init
+                        terraform destroy -auto-approve
+                        '''
+                    }
+                }
+            }
+        }
     }
-        
+
     post {
         always {
             cleanWs()
