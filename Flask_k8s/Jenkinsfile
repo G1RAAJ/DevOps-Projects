@@ -3,23 +3,37 @@ pipeline {
 
     environment {
         AWS_REGION = "us-east-1"
-        ACCOUNT_ID = "<ACCOUNT_ID>"
-        ECR_REGISTRY = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        ACCOUNT_ID = "652942059461"
         ECR_REPO = "flask-app"
+        ECR_REGISTRY = "${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         IMAGE_TAG = "${BUILD_NUMBER}"
+        CLUSTER_NAME = "myeks"
     }
 
     stages {
 
-        stage('Clone Code') {
+        stage('Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/G1RAAJ/Devops-projects.git'
             }
         }
 
+        stage('Debug Workspace') {
+            steps {
+                sh '''
+                pwd
+                ls -R
+                '''
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${ECR_REPO}:${IMAGE_TAG} .'
+                dir('Flask-k8s') {
+                    sh '''
+                    docker build -t $ECR_REPO:$IMAGE_TAG .
+                    '''
+                }
             }
         }
 
@@ -33,52 +47,61 @@ pipeline {
             }
         }
 
-        stage('Push to ECR') {
+        stage('Push Image to ECR') {
             steps {
                 sh '''
-                docker tag ${ECR_REPO}:${IMAGE_TAG} $ECR_REGISTRY/${ECR_REPO}:${IMAGE_TAG}
-                docker push $ECR_REGISTRY/${ECR_REPO}:${IMAGE_TAG}
+                docker tag $ECR_REPO:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+                docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Update Kubeconfig') {
+            steps {
+                sh '''
+                aws eks update-kubeconfig \
+                --region $AWS_REGION \
+                --name $CLUSTER_NAME
                 '''
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
+                dir('Flask-k8s') {
+                    sh '''
+                    sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" deployment.yaml || true
+
+                    kubectl apply -f deployment.yaml
+                    kubectl apply -f service.yaml
+
+                    kubectl rollout status deployment/flask-app
+                    '''
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
                 sh '''
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+                kubectl get pods -o wide
+                kubectl get svc
                 '''
             }
         }
     }
 
-    // 🔥 POST BLOCK (runs after pipeline)
     post {
-
-        always {
-            echo "Pipeline finished (success/failure)"
-        }
-
         success {
-            echo "Deployment successful"
+            echo "✅ Deployment Successful"
         }
 
         failure {
-            echo "Pipeline failed"
+            echo "❌ Deployment Failed"
         }
 
-        // 🔥 Auto destroy after 1 hour
-        cleanup {
-            script {
-                echo "Waiting 1 hour before cleanup..."
-                sleep(time: 1, unit: 'HOURS')
-
-                sh '''
-                echo "Deleting Kubernetes resources..."
-                kubectl delete -f k8s/deployment.yaml --ignore-not-found
-                kubectl delete -f k8s/service.yaml --ignore-not-found
-                '''
-            }
+        always {
+            cleanWs()
         }
     }
 }
