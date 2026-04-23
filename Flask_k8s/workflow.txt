@@ -1,3 +1,6 @@
+Project: Git push → Jenkins → Docker → ECR → Kubernetes → Live App
+------------------------------------------------------------------
+
 app/
  ├── Dockerfile
  ├── app.py
@@ -19,19 +22,39 @@ Push code to GitHub
 Jenkins pulls code → builds Docker image
 Push image to AWS ECR
 Deploy to Kubernetes (EKS or self-managed cluster)
+------------------------------------------------------
+# One-Time Setup on Jenkins (Amazon Linux 2023)
+sudo dnf update -y
 
+# Core tools
+sudo dnf install -y git docker unzip curl
 
-# Build & Push to ECR
-# Install AWS CLI + Docker (Ubuntu EC2)
+# Start Docker
+sudo systemctl start docker
+sudo systemctl enable docker
 
-sudo apt update
-sudo apt install docker.io -y
-sudo usermod -aG docker ubuntu
-newgrp docker
+# Add permissions
+sudo usermod -aG docker ec2-user
+sudo usermod -aG docker jenkins
 
+# Install AWS CLI
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
+
+# Install kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# Verify tools
+git --version
+docker --version
+aws --version
+kubectl version --client
+
+# Configure AWS Access look like 652942059461
+aws sts get-caller-identity
 
 # Create ECR repository
 aws ecr create-repository \
@@ -42,9 +65,12 @@ aws ecr create-repository \
 aws ecr describe-repositories --region us-east-1
 
 # Login to ECR
-aws ecr get-login-password --region us-east-1 | \
+ACCOUNT_ID=652942059461
+REGION=us-east-1
+
+aws ecr get-login-password --region $REGION | \
 docker login --username AWS \
---password-stdin 652942059461.dkr.ecr.us-east-1.amazonaws.com
+--password-stdin $ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
 
 # Push again
 docker push 652942059461.dkr.ecr.us-east-1.amazonaws.com/flask-app:9
@@ -52,6 +78,13 @@ docker push 652942059461.dkr.ecr.us-east-1.amazonaws.com/flask-app:9
 # To know all cluster names
 aws eks list-clusters
 aws eks list-clusters --region us-east-1
+
+# Connect to EKS
+aws eks update-kubeconfig \
+--region us-east-1 \
+--name myeks
+
+kubectl get nodes
 
 ------------
 
