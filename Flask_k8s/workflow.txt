@@ -1,5 +1,6 @@
 Project: Git push → Jenkins → Docker → ECR → Kubernetes → Live App
 ------------------------------------------------------------------
+Note: Run jenkins job after applying these below commands depends on necessary as well as k8s cluster.
 
 app/
  ├── Dockerfile
