@@ -29,7 +29,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                dir('Flask-k8s') {
+                dir('Flask_k8s') {
                     sh '''
                     docker build -t $ECR_REPO:$IMAGE_TAG .
                     '''
@@ -68,7 +68,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                dir('Flask-k8s') {
+                dir('Flask_k8s') {
                     sh '''
                     sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" deployment.yaml || true
 
