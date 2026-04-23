@@ -48,6 +48,11 @@ docker login --username AWS \
 
 # Push again
 docker push 652942059461.dkr.ecr.us-east-1.amazonaws.com/flask-app:9
+
+# To know all cluster names
+aws eks list-clusters
+aws eks list-clusters --region us-east-1
+
 ------------
 
 # Build & Push
