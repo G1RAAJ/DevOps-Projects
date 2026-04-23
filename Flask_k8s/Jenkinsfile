@@ -68,7 +68,7 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                dir('Flask_k8s') {
+                dir('Flask_k8s/k8s') {
                     sh '''
                     sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" deployment.yaml || true
 
