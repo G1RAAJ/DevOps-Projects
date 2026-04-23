@@ -33,6 +33,11 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
 unzip awscliv2.zip
 sudo ./aws/install
 
+# Create ECR repository
+aws ecr create-repository \
+--repository-name flask-app \
+--region us-east-1
+
 # Authenticate to ECR
 aws configure
 
