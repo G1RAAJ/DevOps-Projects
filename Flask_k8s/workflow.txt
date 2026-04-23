@@ -137,41 +137,19 @@ eksctl create nodegroup \
 
 kubectl get nodes
 kubectl get pods -A
-
-# if cluster not properly created and recreate it
-eksctl delete cluster --region=us-east-1 --name=myeks
-
-Jenkins → connects to cluster → deploys app
-------------
-
-# Build & Push
-docker build -t flask-app .
-docker tag flask-app:latest <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
-docker push <ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
-
-# Deploy to Kubernetes
-kubectl apply -f k8s/deployment.yaml
-kubectl apply -f k8s/service.yaml
-
-kubectl get pods
 kubectl get svc
 
-# Install Jenkins (Ubuntu EC2)
-sudo apt update
-sudo apt install openjdk-17-jdk -y
 
-wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
-sudo sh -c 'echo deb http://pkg.jenkins.io/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
-
-sudo apt update
-sudo apt install jenkins -y
-sudo systemctl start jenkins
 
 # Jenkins Plugins
 Git
 Docker Pipeline
 AWS Credentials
 Kubernetes CLI
+
+# IAM user
+Get IAM User name, Password, Console sign-in URL
+Access key ID, Secret access key
 
 # Jenkins Credentials
 AWS credentials (Access Key + Secret)
@@ -181,29 +159,15 @@ Docker/ECR access
 rusted entity: AWS service
 Use case: EC2
 
+role name is jenkins-eks-role
+
 # Attach Policies
 AmazonEC2ContainerRegistryFullAccess
 AmazonEKSClusterPolicy
 AmazonEKSWorkerNodePolicy
-
-#recommended instead of full access
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "ecr:GetAuthorizationToken",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:PutImage",
-        "ecr:InitiateLayerUpload",
-        "ecr:UploadLayerPart",
-        "ecr:CompleteLayerUpload"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
+AdministratorAccess
+AmazonEC2FullAccess
+AWSCloudFormationFullAccess
 
 # EC2 → Instances → Select Jenkins instance → Actions → Security → Modify IAM Role
 
@@ -213,3 +177,123 @@ aws sts get-caller-identity
 # Final Result
 You now have a fully automated CI/CD pipeline:
 Push → Build → Push → Deploy → Live app
+
+Note:
+# if cluster not properly created and recreate it
+eksctl delete cluster --region=us-east-1 --name=myeks
+
+*********************************************************
+Destroy Job
+*********************************************************
+
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION   = "us-east-1"
+        CLUSTER_NAME = "myeks"
+    }
+
+    stages {
+
+        stage('Checkout Repo') {
+            steps {
+                git branch: 'main', url: 'https://github.com/G1RAAJ/Devops-projects.git'
+            }
+        }
+
+        stage('Update Kubeconfig') {
+            steps {
+                sh '''
+                aws eks update-kubeconfig \
+                --region $AWS_REGION \
+                --name $CLUSTER_NAME || true
+                '''
+            }
+        }
+
+        stage('Delete Kubernetes Resources') {
+            steps {
+                sh '''
+                echo "Deleting all Kubernetes resources..."
+                kubectl delete all --all || true
+                '''
+            }
+        }
+
+        stage('Destroy EKS Cluster') {
+            steps {
+                sh '''
+                echo "Destroying EKS cluster..."
+                eksctl delete cluster \
+                --name $CLUSTER_NAME \
+                --region $AWS_REGION
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🔥 Cluster and resources deleted successfully"
+        }
+        failure {
+            echo "❌ Destroy failed"
+        }
+        always {
+            cleanWs()
+        }
+    }
+}
+
+----------------------------------------------------------------------------
+Step 1: Create new Jenkins job
+Name: destroy-eks
+Type: Pipeline
+
+Step 2: Add this Jenkinsfile
+Paste above script
+
+Step 3: Run job
+Click → Build Now
+
+What it does
+1. Connect to cluster
+2. Delete all pods/services
+3. Delete entire EKS cluster
+4. Cleanup workspace
+
+Verify deletion
+aws eks list-clusters --region us-east-1
+
+[]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
