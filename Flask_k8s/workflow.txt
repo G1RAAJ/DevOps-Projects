@@ -114,6 +114,17 @@ aws eks update-kubeconfig \
 --region us-east-1 \
 --name myeks
 
+# Check real cluster status
+aws eks describe-cluster \
+--name myeks \
+--region us-east-1 \
+--query "cluster.status"
+
+# Check nodegroup
+eksctl get nodegroup \
+--cluster myeks \
+--region us-east-1
+
 kubectl get nodes
 
 Jenkins → connects to cluster → deploys app
