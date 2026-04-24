@@ -111,3 +111,9 @@ AWSCloudFormationFullAccess
 
 # Run on Jenkins EC2
 aws sts get-caller-identity
+
+🔷 workspace Cleanup
+sudo rm -rf /var/lib/jenkins/workspace/*
+sudo rm -rf /var/lib/jenkins/jobs/*/builds/*
+docker system prune -a -f
+
