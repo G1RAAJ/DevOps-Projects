@@ -24,8 +24,8 @@ module "eks" {
   cluster_name    = "myeks"
   cluster_version = "1.30"
 
-  vpc_id     = "vpc-09a23ce107252dc4b"
-  subnet_ids = ["subnet-aaa","subnet-bbb"]
+  vpc_id     = "YOUR_REAL_VPC_ID"
+  subnet_ids = ["subnet-1","subnet-2"]
 
   create_cloudwatch_log_group = false
   create_kms_key              = false
