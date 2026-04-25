@@ -109,7 +109,7 @@ pipeline {
                     $class: 'AmazonWebServicesCredentialsBinding',
                     credentialsId: 'aws-creds'
                 ]]) {
-                    dir('Tform') {
+                    dir('nginx/Tform') {
                         sh '''
                         terraform init -reconfigure
                         terraform apply -auto-approve
