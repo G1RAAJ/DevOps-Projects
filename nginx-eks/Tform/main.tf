@@ -24,13 +24,12 @@ module "eks" {
   cluster_name    = "myeks"
   cluster_version = "1.30"
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  vpc_id     = "vpc-0abc123"
+  subnet_ids = ["subnet-111","subnet-222"]
 
-  # 🔥 FIXES
   create_cloudwatch_log_group = false
   create_kms_key              = false
-  cluster_encryption_config = []
+  cluster_encryption_config   = []
 
   eks_managed_node_groups = {
     default = {
