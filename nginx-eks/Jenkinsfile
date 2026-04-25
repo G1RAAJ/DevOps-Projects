@@ -42,7 +42,7 @@ pipeline {
                 jenkins --version
                 kubectl version --client
                 eksctl version
-                terraform -version
+                terraform version
                 '''
             }
         }
