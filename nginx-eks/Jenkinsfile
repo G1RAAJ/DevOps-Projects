@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        stage('Prepare Files') {
+        stage('Index File') {
             steps {
                 dir('nginx-eks') {
                     sh '''
