@@ -15,7 +15,33 @@ pipeline {
                  git branch: 'main', url: 'https://github.com/G1RAAJ/Devops-projects.git'
             }
         }
+        
+        stage('Run Setup Script') {
+            steps {
+                sh '''
+                chmod +x setup.sh
+                sudo bash setup.sh
+                '''
+            }
+        }
 
+        stage('Verify Tools') {
+            steps {
+                sh '''
+                curl --version
+                wget --version
+                git --version
+                java -version
+                docker --version
+                aws --version
+                jenkins --version
+                kubectl version --client
+                eksctl version
+                terraform -version
+                '''
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
                 sh '''
