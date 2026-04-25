@@ -47,10 +47,21 @@ pipeline {
             }
         }
 
-        stage('Verify Repo Structure') {
+        stage('Debug Files') {
             steps {
                 sh 'pwd'
                 sh 'ls -R'
+            }
+        }
+
+        stage('Prepare Files') {
+            steps {
+                dir('nginx-eks') {
+                    sh '''
+                    echo "<h1>Nginx Working</h1>" > index.html
+                    ls -l
+                    '''
+                }
             }
         }
 
