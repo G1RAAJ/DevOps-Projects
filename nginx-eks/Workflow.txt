@@ -4,7 +4,7 @@ Project: Nginx → Docker → ECR → EKS → Helm → Terraform → Jenkins →
 Project workflow 
 
 🔷 1. Project / Folder Structure
-nginx-eks-project/
+nginx-eks/
 ├── terraform/
 │   ├── main.tf
 │   ├── variables.tf
@@ -17,6 +17,9 @@ nginx-eks-project/
 |
 ├── Dockerfile
 ├── Jenkinsfile
+├── workflow.txt
+├── index.html
+├── setup.sh
 └── destroy.Jenkinsfile
 
 # https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/#downloading-and-installing-jenkins
