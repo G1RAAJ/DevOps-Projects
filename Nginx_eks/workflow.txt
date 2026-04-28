@@ -4,20 +4,26 @@ Project: Nginx → Docker → ECR → EKS → Helm → Terraform → Jenkins →
 Project workflow 
 
 🔷 1. Project / Folder Structure
-nginx-eks-project/
-├── terraform/
-│   ├── main.tf
-│   ├── variables.tf
-│   ├── outputs.tf 
+Nginx_eks/
 │
-├── k8s/
+├── Helm/
+│   ├── Chart.yaml
 │   ├── deployment.yaml
 │   ├── service.yaml
-│   └── helm-nginx-values.yaml
+|   └── values.yaml
+|
+├── Terraform/
+│   ├── backend.tf
+│   ├── eks.tf
+│   |──output.tf
+│   ├── provider.tf
+|   ├── variable.tf
+│   └── vpc.tf
 |
 ├── Dockerfile
 ├── Jenkinsfile
-└── destroy.Jenkinsfile
+├── setup.sh
+└── workflow.txt
 
 # https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/#downloading-and-installing-jenkins
 # Install tools (Amazon Linux 2023)
