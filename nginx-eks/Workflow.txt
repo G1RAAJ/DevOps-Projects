@@ -1,6 +1,8 @@
 Nginx → Docker → EKS → Helm → Terraform → Jenkins → LoadBalancer → Live App
 -----------------------------------------------------------------------------
-🔷 1. Project Structure
+Project workflow 
+
+🔷 1. Project / Folder Structure
 nginx-eks-project/
 ├── terraform/
 │   ├── main.tf
@@ -16,51 +18,15 @@ nginx-eks-project/
 ├── Jenkinsfile
 └── destroy.Jenkinsfile
 
-🔷 1. Architecture
-Jenkins → Terraform → EKS
-Jenkins → Helm → Nginx Deploy
-K8s Service → AWS LoadBalancer → Browser
-
-🔷 2. EC2 (Jenkins Server Setup)
-Install tools (Amazon Linux 2023)
-
+# Install tools (Amazon Linux 2023)
 # update
-sudo dnf update -y && sudo yum install -y git wget curl unzip tar vim
-
 # Java
-sudo dnf install java-17-amazon-corretto -y
-
 # Jenkins
-sudo wget -O /etc/yum.repos.d/jenkins.repo \
-https://pkg.jenkins.io/redhat-stable/jenkins.repo
-
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-sudo dnf install jenkins -y
-sudo systemctl enable jenkins
-sudo systemctl start jenkins
-sudo systemctl status jenkins
-
 # Docker
-sudo dnf install docker -y
-sudo systemctl start docker
-sudo usermod -aG docker jenkins
-
 # AWS CLI
-sudo dnf install awscli -y
-
 # kubectl
-curl -o kubectl https://amazon-eks.s3.us-east-1.amazonaws.com/latest/2023-11-14/bin/linux/amd64/kubectl
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
-
 # eksctl
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz
-sudo mv eksctl /usr/local/bin/
-
 # Terraform
-sudo dnf install -y yum-utils
-sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-sudo dnf install terraform -y
 
 🔷 Check Versions
 curl --version
