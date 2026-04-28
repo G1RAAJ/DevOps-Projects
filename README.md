@@ -12,8 +12,7 @@ H */1 * * *
 Daily at 2 AM
 H 2 * * *
 
-
-finally
+👉 Note: 
 if you can't remove all resource then remove manually like ec2 instances, eks, s3 bucket, roles, IAM user, load balancer, autoscalling group, elastic ips, security groups vpc and etc to avid bill.
 
 Run on Jenkins EC2:
