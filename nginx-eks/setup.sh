@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "🔹 Updating for Amazon Linux 2023"
 sudo yum -y update
 
