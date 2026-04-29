@@ -71,12 +71,15 @@ Use case: EC2
 role name is jenkins-eks-role
 
 # Attach Policies
+AdministratorAccess
+AmazonEC2FullAccess
 AmazonEC2ContainerRegistryFullAccess
 AmazonEKSClusterPolicy
 AmazonEKSWorkerNodePolicy
-AdministratorAccess
-AmazonEC2FullAccess
+AmazonECRFullAccess
+IAMFullAccess
 AWSCloudFormationFullAccess
+CloudWatchFullAccess
 
 🔷 7.EC2 → Instances → Select Jenkins instance → Actions → Security → Modify IAM Role
 
