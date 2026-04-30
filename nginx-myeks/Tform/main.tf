@@ -21,11 +21,16 @@ module "eks" {
   ]
 
   ########################################
-  # 🔥 NETWORK FIX (VERY IMPORTANT)
+  # 🔥 NETWORK FIX (IMPORTANT)
   ########################################
   cluster_endpoint_public_access       = true
   cluster_endpoint_private_access      = false
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+
+  ########################################
+  # 🔥 FIX: avoid CloudWatch conflict
+  ########################################
+  create_cloudwatch_log_group = false
 
   ########################################
   # NODE GROUP
@@ -45,23 +50,4 @@ module "eks" {
   tags = {
     Project = "nginx-eks"
   }
-}
-
-########################################
-# AWS AUTH (FIX FOR JENKINS ACCESS)
-########################################
-
-module "aws_auth" {
-  source  = "terraform-aws-modules/eks/aws//modules/aws-auth"
-  version = "20.37.2"
-
-  manage_aws_auth_configmap = true
-
-  aws_auth_roles = [
-    {
-      rolearn  = "arn:aws:iam::652942059461:role/nginx-myeks-2-role"
-      username = "jenkins"
-      groups   = ["system:masters"]
-    }
-  ]
 }
