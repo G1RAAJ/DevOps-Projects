@@ -84,8 +84,31 @@ AWSCloudFormationFullAccess
 
 🔷 7.EC2 → Instances → Select Jenkins instance → Actions → Security → Modify IAM Role
 
-# Run on Jenkins EC2
+🔧 Step 1: Check current IAM role
 aws sts get-caller-identity
+
+🔧 Step 2: Add this role to EKS
+kubectl edit configmap aws-auth -n kube-system
+
+🔧 Step 3: Add your role
+- rolearn: arn:aws:iam::<ACCOUNT_ID>:role/<YOUR_EC2_ROLE>
+  username: jenkins
+  groups:
+    - system:masters
+
+--> should be like below
+
+mapRoles: |
+  - rolearn: arn:aws:iam::652942059461:role/nginx-myeks-2-role
+    username: jenkins
+    groups:
+      - system:masters
+
+🔧 Step 4: Save & exit
+Ctrl+x y m
+
+🔧 Step 5: Test again
+kubectl get nodes
 
 ------------------------------------------------------
 Resource deleting Commands
