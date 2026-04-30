@@ -12,8 +12,8 @@ module "eks" {
   vpc_id = "vpc-09a23ce107252dc4b"
 
   subnet_ids = [
-    "subnet-028322a73eba78e51",
-    "subnet-04fa50ba482c9953e"
+    "subnet-04a75877b20cf9bf4",
+    "subnet-079b66fb0be7efc65"
   ]
 
   cluster_endpoint_public_access = true
