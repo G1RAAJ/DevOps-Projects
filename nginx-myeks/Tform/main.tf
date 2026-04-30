@@ -17,8 +17,8 @@ module "eks" {
   ]
 
   cluster_endpoint_public_access       = true
-cluster_endpoint_private_access      = true
-cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+  cluster_endpoint_private_access      = true
+  cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 
   create_cloudwatch_log_group = false
   create_kms_key              = false
