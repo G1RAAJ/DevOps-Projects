@@ -78,6 +78,7 @@ AmazonEC2ContainerRegistryFullAccess
 AmazonEKSClusterPolicy
 AmazonEKSWorkerNodePolicy
 AmazonECRFullAccess
+AmazonVPCFullAccess
 IAMFullAccess
 AWSCloudFormationFullAccess
 CloudWatchFullAccess
