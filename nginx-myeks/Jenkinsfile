@@ -57,7 +57,7 @@ pipeline {
             steps {
                 dir('nginx-myeks/Tform') {
                     sh '''
-                    terraform init
+                    terraform init || terraform init -upgrade
                     terraform apply -auto-approve
                     '''
                 }
